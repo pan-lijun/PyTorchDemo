@@ -4,6 +4,7 @@ from model import dice_loss, dice_score, dice_score_weighted
 from model.ACDCDataset import ACDCDateSet
 from torch.utils.data import Dataset, DataLoader
 from model.unet import UNet
+from model.my_unet import MyUNet
 from PIL import Image
 import numpy as np
 from matplotlib.colors import ListedColormap
@@ -128,7 +129,7 @@ def train_model_with_gpu(model, train_dataloader, validation_dataloader, criteri
 
     Path(dir_checkpoint).mkdir(parents=True, exist_ok=True)
     state_dict = model.state_dict()
-    torch.save(state_dict, '../checkpoints/checkpoint_acdc_100.pth')
+    torch.save(state_dict, '../checkpoints/checkpoint_acdc_my_unet_40.pth')
 
     return model
 
@@ -140,7 +141,7 @@ if __name__ == '__main__':
     validation_mask_path = '..\\data\\acdc\\validating\\masks'
     dir_checkpoint = '../checkpoints'
     lr = 1e-3
-    num_epochs = 100
+    num_epochs = 40
 
     dataloader_params = {
         'batch_size': 4,  # 根据实际情况调整批次大小
@@ -158,7 +159,7 @@ if __name__ == '__main__':
     train_dataloader = DataLoader(dataset=train_dataset, **dataloader_params)
     validation_dataloader = DataLoader(dataset=validation_dataset, **dataloader_params)
 
-    model = UNet(1, 4)
+    model = MyUNet(1, 4)
     # criterion = dice_score_weighted.dice_loss
     criterion = dice_score_weighted.dice_loss
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)

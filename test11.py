@@ -2,13 +2,13 @@ import cv2
 import numpy as np
 
 # 加载原始灰度图像
-original_image = cv2.imread('data/acdc/validating/imgs/patient100_frame13_slice04.png', cv2.IMREAD_GRAYSCALE)
+original_image = cv2.imread('data/acdc/testing/imgs/patient101_frame01_slice09.png', cv2.IMREAD_GRAYSCALE)
 
 # 将原始灰度图像转换为彩色图像，通过复制灰度值到三个通道
 rgb_original_image = cv2.cvtColor(original_image, cv2.COLOR_GRAY2RGB)
 
 # 加载灰度标签图像
-label_image = cv2.imread('data/acdc/validating/masks/patient100_frame13_gt_slice04.png', cv2.IMREAD_GRAYSCALE)
+label_image = cv2.imread('data/acdc/testing/masks/patient101_frame01_gt_slice09.png', cv2.IMREAD_GRAYSCALE)
 
 # 定义颜色映射表（包括0）
 color_mapping = {

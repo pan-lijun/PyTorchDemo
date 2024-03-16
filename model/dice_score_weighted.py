@@ -47,9 +47,6 @@ def multiclass_dice_coeff(input: Tensor, target: Tensor, reduce_batch_first: boo
 
 
 def dice_loss(input: Tensor, target: Tensor, class_weights: Tensor, multiclass: bool = False):
-    # print('input', input.shape)
-    # print('target', target.shape)
-    # Dice loss (objective to minimize) between 0 and 1
     weighted_masks = apply_class_weights(torch.zeros_like(target), target, class_weights)
     fn = multiclass_dice_coeff if multiclass else dice_coeff
     return 1 - fn(input, weighted_masks, reduce_batch_first=True)

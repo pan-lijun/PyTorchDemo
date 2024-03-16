@@ -47,7 +47,7 @@ def train_model(model, dataloader, criterion, optimizer, num_epochs):
 
     Path(dir_checkpoint).mkdir(parents=True, exist_ok=True)
     state_dict = model.state_dict()
-    torch.save(state_dict, '../checkpoints/checkpoint.pth')
+    torch.save(state_dict, '../checkpoints/checkpoint_msd.pth')
 
     return model
 
@@ -128,19 +128,19 @@ def train_model_with_gpu(model, train_dataloader, validation_dataloader, criteri
 
     Path(dir_checkpoint).mkdir(parents=True, exist_ok=True)
     state_dict = model.state_dict()
-    torch.save(state_dict, '../checkpoints/checkpoint_acdc_100.pth')
+    torch.save(state_dict, '../checkpoints/checkpoint_msd.pth')
 
     return model
 
 
 if __name__ == '__main__':
-    train_img_path = '..\\data\\acdc\\training\\imgs'
-    train_mask_path = '..\\data\\acdc\\training\\masks'
-    validation_img_path = '..\\data\\acdc\\validating\\imgs'
-    validation_mask_path = '..\\data\\acdc\\validating\\masks'
+    train_img_path = '..\\data\\msd\\training\\imgs'
+    train_mask_path = '..\\data\\msd\\training\\masks2'
+    validation_img_path = '..\\data\\msd\\validating\\imgs'
+    validation_mask_path = '..\\data\\msd\\validating\\masks2'
     dir_checkpoint = '../checkpoints'
     lr = 1e-3
-    num_epochs = 100
+    num_epochs = 10
 
     dataloader_params = {
         'batch_size': 4,  # 根据实际情况调整批次大小
@@ -149,8 +149,8 @@ if __name__ == '__main__':
         # 'pin_memory': True,  # 如果可能，将数据复制到CUDA设备内存中以加速数据传输
     }
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    class_weights = torch.tensor([0.1, 2, 4, 1])
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    class_weights = torch.tensor([0.1, 1])
     class_weights.to(device)
     # 创建数据加载器
     train_dataset = ACDCDateSet(train_img_path, train_mask_path)
@@ -158,7 +158,7 @@ if __name__ == '__main__':
     train_dataloader = DataLoader(dataset=train_dataset, **dataloader_params)
     validation_dataloader = DataLoader(dataset=validation_dataset, **dataloader_params)
 
-    model = UNet(1, 4)
+    model = UNet(1, 2)
     # criterion = dice_score_weighted.dice_loss
     criterion = dice_score_weighted.dice_loss
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -166,8 +166,8 @@ if __name__ == '__main__':
                                  device)
     model.to('cpu')
 
-    prediction_img_path = '../data/acdc/testing/imgs/patient101_frame01_slice09.png'
-    mask_path = '../data/acdc/testing/masks/patient101_frame01_gt_slice09.png'
+    prediction_img_path = '../data/msd/testing/imgs/P33-0020.png'
+    mask_path = '../data/msd/testing/masks2/P33-0020-label.png'
     img_pil = Image.open(prediction_img_path).convert('L')
     img_tensor = ACDCDateSet.preprocess(img_pil, False)
     img_batch = np.expand_dims(img_tensor, axis=0)
@@ -185,7 +185,7 @@ if __name__ == '__main__':
     class_indices = gray_tensor.detach().cpu().numpy()
 
     # 创建一个颜色映射表，假设我们有4个类别
-    cmap = ListedColormap(['black', 'red', 'green', 'blue'])
+    cmap = ListedColormap(['black', 'green'])
 
     # 显示带有颜色编码的图像
     plt.imshow(class_indices, cmap=cmap)

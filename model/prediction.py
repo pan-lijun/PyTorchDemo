@@ -12,8 +12,8 @@ model_path = '../checkpoints/checkpoint.pth'
 state_dict = torch.load(model_path, map_location='cpu')
 model.load_state_dict(state_dict)
 
-prediction_img_path = '../data/acdc/validating/imgs/patient100_frame13_slice04.png'
-mask_path = '../data/acdc/validating/masks/patient100_frame13_gt_slice04.png'
+prediction_img_path = '../data/acdc/testing/imgs/patient101_frame01_slice09.png'
+mask_path = '../data/acdc/testing/masks/patient101_frame01_gt_slice09.png'
 img_pil = Image.open(prediction_img_path).convert('L')
 img_tensor = ACDCDateSet.preprocess(img_pil, False)
 img_batch = np.expand_dims(img_tensor, axis=0)

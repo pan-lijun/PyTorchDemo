@@ -69,12 +69,16 @@ def train_model_with_gpu(model, train_dataloader, validation_dataloader, criteri
             optimizer.zero_grad()  # 清除梯度缓冲区
             outputs = model(data)
 
+            print(target.max().item())
+
+            one_hot_target = F.one_hot(target, model.n_classes).permute(0, 3, 1, 2).float().to(device)
+            print(one_hot_target.shape)
             # 计算损失
             loss = criterion(
                 F.softmax(outputs, dim=1).float(),
-                F.one_hot(target, model.n_classes).permute(0, 3, 1, 2).float().to(device),
+                one_hot_target,
                 class_weights.to(device),  # 确保class_weights也在GPU上（如果适用）
-                multiclass=True
+                multiclass=False
             )
 
             # 反向传播和优化
@@ -109,7 +113,7 @@ def train_model_with_gpu(model, train_dataloader, validation_dataloader, criteri
                 F.softmax(outputs, dim=1).float(),
                 F.one_hot(target, model.n_classes).permute(0, 3, 1, 2).float().to(device),
                 class_weights.to(device),  # 确保class_weights也在GPU上（如果适用）
-                multiclass=True
+                multiclass=False
             )
 
             # # 反向传播和优化
@@ -134,23 +138,24 @@ def train_model_with_gpu(model, train_dataloader, validation_dataloader, criteri
 
 
 if __name__ == '__main__':
-    train_img_path = '..\\data\\acdc\\training\\imgs'
-    train_mask_path = '..\\data\\acdc\\training\\masks'
-    validation_img_path = '..\\data\\acdc\\validating\\imgs'
-    validation_mask_path = '..\\data\\acdc\\validating\\masks'
+    train_img_path = '..\\data\\msd\\training\\imgs'
+    train_mask_path = '..\\data\\msd\\training\\masks'
+    validation_img_path = '..\\data\\msd\\validating\\imgs'
+    validation_mask_path = '..\\data\\msd\\validating\\masks'
     dir_checkpoint = '../checkpoints'
     lr = 1e-3
-    num_epochs = 100
+    num_epochs = 4
 
     dataloader_params = {
         'batch_size': 4,  # 根据实际情况调整批次大小
-        'shuffle': True,  # 是否在每个epoch开始时打乱数据顺序
+        'shuffle': False,  # 是否在每个epoch开始时打乱数据顺序
         # 'num_workers': 4,  # 并行加载数据的工作进程数（根据机器CPU核心数合理设置）
         # 'pin_memory': True,  # 如果可能，将数据复制到CUDA设备内存中以加速数据传输
     }
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    class_weights = torch.tensor([0.1, 2, 4, 1])
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = "cpu"
+    class_weights = torch.tensor([0.1, 1])
     class_weights.to(device)
     # 创建数据加载器
     train_dataset = ACDCDateSet(train_img_path, train_mask_path)
@@ -158,7 +163,7 @@ if __name__ == '__main__':
     train_dataloader = DataLoader(dataset=train_dataset, **dataloader_params)
     validation_dataloader = DataLoader(dataset=validation_dataset, **dataloader_params)
 
-    model = UNet(1, 4)
+    model = UNet(1, 2)
     # criterion = dice_score_weighted.dice_loss
     criterion = dice_score_weighted.dice_loss
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -166,8 +171,8 @@ if __name__ == '__main__':
                                  device)
     model.to('cpu')
 
-    prediction_img_path = '../data/acdc/testing/imgs/patient101_frame01_slice09.png'
-    mask_path = '../data/acdc/testing/masks/patient101_frame01_gt_slice09.png'
+    prediction_img_path = '../data/msd/testing/imgs/P33-0020.png'
+    mask_path = '../data/msd/testing/masks/P33-0020-label.png'
     img_pil = Image.open(prediction_img_path).convert('L')
     img_tensor = ACDCDateSet.preprocess(img_pil, False)
     img_batch = np.expand_dims(img_tensor, axis=0)
@@ -185,7 +190,7 @@ if __name__ == '__main__':
     class_indices = gray_tensor.detach().cpu().numpy()
 
     # 创建一个颜色映射表，假设我们有4个类别
-    cmap = ListedColormap(['black', 'red', 'green', 'blue'])
+    cmap = ListedColormap(['black', 'red'])
 
     # 显示带有颜色编码的图像
     plt.imshow(class_indices, cmap=cmap)
