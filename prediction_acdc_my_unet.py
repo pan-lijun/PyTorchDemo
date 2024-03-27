@@ -1,4 +1,4 @@
-from model.unet import UNet
+from model.my_unet import MyUNet
 import torch
 import numpy as np
 from matplotlib.colors import ListedColormap
@@ -9,21 +9,24 @@ from model.ACDCDataset import ACDCDateSet
 from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = UNet(1, 4)
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = MyUNet(1, 4)
 
-model_path = '..\\checkpoints\\checkpoint_acdc.pth'
+model_path = '.\\checkpoints\\checkpoint_acdc_my_unet_100.pth'
 state_dict = torch.load(model_path, map_location='cpu')
 model.load_state_dict(state_dict)
 model.eval()
-model.to(device)
+model.set_train_mode(False)
+model.merge_weights()
+# model.to(device)
 
-test_img_path = '..\\data\\acdc\\testing\\imgs'
-test_mask_path = '..\\data\\acdc\\testing\\masks'
+test_img_path = '.\\temp\\acdc\\prediction\\imgs'
+test_mask_path = '.\\temp\\acdc\\prediction\\masks'
+save_path = '.\\temp\\acdc\\prediction\\prediction_my_unet'
 
 dataloader_params = {
     'batch_size': 1,  # 根据实际情况调整批次大小
-    'shuffle': True,  # 是否在每个epoch开始时打乱数据顺序
+    'shuffle': False,  # 是否在每个epoch开始时打乱数据顺序
     # 'num_workers': 4,  # 并行加载数据的工作进程数（根据机器CPU核心数合理设置）
     # 'pin_memory': True,  # 如果可能，将数据复制到CUDA设备内存中以加速数据传输
 }
@@ -82,19 +85,26 @@ def show_prediction_img(data, outputs):
     plt.imshow(rgb_img_with_colors)
     plt.show()
 
+    # plt.savefig(f'{save_path}\\{batch_idx}.png')
+    rgb_pil_image = Image.fromarray(rgb_img_with_colors.astype('uint8'), 'RGB')
+
+    # 保存图像
+    rgb_pil_image.save(f'{save_path}\\{batch_idx}.png')
+    # print(f'{save_path}\\{batch_idx}.png')
+
 
 for batch_idx, (data, target) in enumerate(test_dataloader):
     # 将数据和目标也移动到GPU
-    data, target = data.to(device), target.to(device)
+    # data, target = data.to(device), target.to(device)
     outputs = model(data)
     dice_score = dice_score_fn(F.softmax(outputs, dim=1).float(),
                                F.one_hot(target, model.n_classes).permute(0, 3, 1, 2).float())
     print(f"index : {batch_idx} ======> dice_score: {dice_score}")
     dice_score_list.append(dice_score.item())
 
-    # show_prediction_img(data, outputs)
+    show_prediction_img(data, outputs)
     #
-    # if batch_idx == 4:
+    # if batch_idx == 20:
     #     break
 # 将dice_score_list转换为numpy数组
 dice_scores_array = np.array(dice_score_list)

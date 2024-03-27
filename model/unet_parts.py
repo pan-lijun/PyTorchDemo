@@ -19,12 +19,40 @@ class DoubleConv(nn.Module):
         return self.double_conv(x)
 
 
+class DoubleConvWithoutBN(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.double_conv = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1, bias=False),
+            # nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+            # nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True)
+        )
+
+    def forward(self, x):
+        return self.double_conv(x)
+
+
 class Down(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.max_pool_conv = nn.Sequential(
             nn.MaxPool2d(2),
             DoubleConv(in_channels, out_channels)
+        )
+
+    def forward(self, x):
+        return self.max_pool_conv(x)
+
+
+class DownWithoutBN(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.max_pool_conv = nn.Sequential(
+            nn.MaxPool2d(2),
+            DoubleConvWithoutBN(in_channels, out_channels)
         )
 
     def forward(self, x):

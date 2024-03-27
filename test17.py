@@ -36,7 +36,7 @@ def rotate_imgs(image_paths, label_paths, img_dir, mask_dir, rotation_degrees):
 
         # img_array = np.array(img)
         # rotated_img_array = np.array(rotated_img)
-        # label_array = np.array(label)
+        # label_array = np.array(labels)
         # rotated_label_array = np.array(rotated_label)
         #
         # # 创建一个新的figure，并设置子图布局为1行2列
@@ -211,8 +211,8 @@ def add_gaussian_noise(image_paths, mean=0, std_deviation=1):
 
 if __name__ == '__main__':
     # 假设你有图像路径和标签路径列表
-    # image_paths = [".\\data\\acdc\\imgs\\patient001_frame01_slice02.png"]
-    # label_paths = [".\\data\\acdc\\masks\\patient001_frame01_gt_slice02.png"]
+    # image_paths = [".\\data\\data\\imgs\\patient001_frame01_slice02.png"]
+    # label_paths = [".\\data\\data\\masks\\patient001_frame01_gt_slice02.png"]
     img_dir = ".\\data\\acdc\\training\\imgs"
     image_paths = os.listdir(img_dir)
     image_paths = [os.path.join(img_dir, path) for path in image_paths]

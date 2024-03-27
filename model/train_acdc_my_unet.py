@@ -129,7 +129,7 @@ def train_model_with_gpu(model, train_dataloader, validation_dataloader, criteri
 
     Path(dir_checkpoint).mkdir(parents=True, exist_ok=True)
     state_dict = model.state_dict()
-    torch.save(state_dict, '../checkpoints/checkpoint_acdc_my_unet_40.pth')
+    torch.save(state_dict, '../checkpoints/checkpoint_acdc_my_unet_100.pth')
 
     return model
 
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     validation_mask_path = '..\\data\\acdc\\validating\\masks'
     dir_checkpoint = '../checkpoints'
     lr = 1e-3
-    num_epochs = 40
+    num_epochs = 100
 
     dataloader_params = {
         'batch_size': 4,  # 根据实际情况调整批次大小

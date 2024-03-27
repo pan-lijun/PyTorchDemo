@@ -96,7 +96,7 @@ def train_model_with_gpu(model, dataloader, criterion, optimizer, num_epochs, de
 
     Path(dir_checkpoint).mkdir(parents=True, exist_ok=True)
     state_dict = model.state_dict()
-    torch.save(state_dict, '../checkpoints/checkpoint_acdc.pth')
+    torch.save(state_dict, '../checkpoints/checkpoint_acdc_100.pth')
 
     return model
 

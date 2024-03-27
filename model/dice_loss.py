@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 
-from ACDCDataset import ACDCDateSet
+from model.ACDCDataset import ACDCDateSet
 import model
-from unet import UNet
+from model.unet import UNet
 
 
 def one_hot_encoding(target, num_classes):

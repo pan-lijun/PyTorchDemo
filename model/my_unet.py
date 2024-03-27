@@ -1,4 +1,4 @@
-from unet_parts import *
+from model.unet_parts import *
 
 
 class MyUNet(nn.Module):

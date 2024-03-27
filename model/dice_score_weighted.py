@@ -3,9 +3,9 @@ from torch import Tensor
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 
-from ACDCDataset import ACDCDateSet
+from model.ACDCDataset import ACDCDateSet
 import model
-from unet import UNet
+from model.unet import UNet
 import torch.nn.functional as F
 
 

@@ -91,7 +91,7 @@ def save_dcm2label(icontour_path, ocontour_path, dcm_path, img_path, label_path)
 
     # # 使用imshow显示该二值图像
     # plt.imshow(label_array, cmap='gray', vmin=0, vmax=1)
-    # plt.colorbar(ticks=[0, 1], label='Label')
+    # plt.colorbar(ticks=[0, 1], labels='Label')
     # plt.show()
 
     # np.savetxt('label_data.txt', label_array, fmt='%d')
@@ -105,6 +105,6 @@ if __name__ == '__main__':
     ocontour_path = '.\\TrainingSet\\patient01\\P01contours-manual\\P01-0100-ocontour-manual.txt'
     dcm_path = '.\\TrainingSet\\patient01\\P01dicom\\P01-0100.dcm'
     img_path = '.\\data\\msd\\training\\imgs\\P01-0100.png'
-    label_path = '.\\data\\msd\\training\\tmp\\P01-0100-label.png'
+    label_path = '.\\data\\msd\\training\\tmp\\P01-0100-labels.png'
     save_dcm2label(icontour_path, ocontour_path, dcm_path, img_path, label_path)
     # save_dcm2png(icontour_path, ocontour_path, dcm_path, img_path, label_path)

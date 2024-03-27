@@ -27,7 +27,7 @@ import numpy as np
 #             print(f"无法读取PNG标签图像 {filename}，请检查文件是否存在并格式正确。")
 
 # 读取标签图像路径
-# label_path = ".\\data\\msd\\training\\masks\\P01-0080-label.png"
+# label_path = ".\\data\\msd\\training\\masks\\P01-0080-labels.png"
 #
 # # 读取PNG标签图像并转换为灰度模式
 # label_image = cv2.imread(label_path, cv2.IMREAD_GRAYSCALE)
@@ -47,10 +47,10 @@ import numpy as np
 # print("finished")
 
 # 指定原始标签文件夹路径
-original_label_folder_path = ".\\data\\msd\\validating\\masks"
+original_label_folder_path = ".\\data\\msd\\testing\\masks"
 
 # 指定目标保存标签文件夹路径
-processed_label_folder_path = ".\\data\\msd\\validating\\masks2"
+processed_label_folder_path = ".\\data\\msd\\testing\\masks2"
 
 # 确保目标文件夹存在，如果不存在则创建
 if not os.path.exists(processed_label_folder_path):
